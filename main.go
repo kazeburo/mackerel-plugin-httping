@@ -23,12 +23,13 @@ import (
 var Version string
 
 type cmdOpts struct {
-	URL       string `long:"url" description:"URL to ping" required:"true"`
-	Timeout   int    `long:"timeout" default:"5000" description:"timeout millisec per ping"`
-	Interval  int    `long:"interval" default:"10" description:"sleep millisec after every ping"`
-	Count     int    `long:"count" default:"10" description:"Count Sending ping"`
-	KeyPrefix string `long:"key-prefix" description:"Metric key prefix" required:"true"`
-	Version   bool   `short:"v" long:"version" description:"Show version"`
+	URL              string `long:"url" description:"URL to ping" required:"true"`
+	Timeout          int    `long:"timeout" default:"5000" description:"timeout millisec per ping"`
+	Interval         int    `long:"interval" default:"10" description:"sleep millisec after every ping"`
+	Count            int    `long:"count" default:"10" description:"Count Sending ping"`
+	KeyPrefix        string `long:"key-prefix" description:"Metric key prefix" required:"true"`
+	DisableKeepalive bool   `long:"disable-keepalive" description:"disable keepalive"`
+	Version          bool   `short:"v" long:"version" description:"Show version"`
 }
 
 func round(f float64) int64 {
@@ -73,7 +74,7 @@ func getStats(opts cmdOpts) error {
 			TLSHandshakeTimeout:   10 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,
 			ResponseHeaderTimeout: time.Millisecond * time.Duration(opts.Timeout),
-			// DisableKeepAlives: true,
+			DisableKeepAlives:     opts.DisableKeepalive,
 		},
 	}
 	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
