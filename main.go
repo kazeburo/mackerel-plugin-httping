@@ -25,7 +25,7 @@ var Version string
 type cmdOpts struct {
 	URL              string `long:"url" description:"URL to ping" required:"true"`
 	Timeout          int    `long:"timeout" default:"5000" description:"timeout millisec per ping"`
-	Interval         int    `long:"interval" default:"10" description:"sleep millisec after every ping"`
+	Interval         int    `long:"interval" default:"200" description:"sleep millisec after every ping"`
 	Count            int    `long:"count" default:"10" description:"Count Sending ping"`
 	KeyPrefix        string `long:"key-prefix" description:"Metric key prefix" required:"true"`
 	DisableKeepalive bool   `long:"disable-keepalive" description:"disable keepalive"`
