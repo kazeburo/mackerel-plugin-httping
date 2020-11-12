@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -15,8 +16,6 @@ import (
 	"time"
 
 	flags "github.com/jessevdk/go-flags"
-	"go.mercari.io/go-dnscache"
-	"go.uber.org/zap"
 )
 
 // Version by Makefile
@@ -60,16 +59,37 @@ func doRequest(req *http.Request, client http.Client) (time.Duration, error) {
 	return elapsed, nil
 }
 
-func getStats(opts cmdOpts) error {
-	resolver, _ := dnscache.New(600*time.Second, time.Millisecond*time.Duration(opts.Timeout), zap.NewNop())
+var ips []net.IPAddr
 
-	dialer := (&net.Dialer{
+func getStats(opts cmdOpts) error {
+
+	resolver := &net.Resolver{}
+	ips = make([]net.IPAddr, 0)
+
+	baseDialer := (&net.Dialer{
 		Timeout:   time.Millisecond * time.Duration(opts.Timeout),
 		KeepAlive: 30 * time.Second,
 	}).DialContext
+
+	dialer := func(ctx context.Context, network, addr string) (net.Conn, error) {
+		h, p, err := net.SplitHostPort(addr)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(ips) == 0 {
+			ips, err = resolver.LookupIPAddr(ctx, h)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		return baseDialer(ctx, "tcp", net.JoinHostPort(ips[rand.Intn(len(ips))].String(), p))
+	}
+
 	client := http.Client{
 		Transport: &http.Transport{
-			DialContext:           dnscache.DialFunc(resolver, dialer),
+			DialContext:           dialer,
 			IdleConnTimeout:       30 * time.Second,
 			TLSHandshakeTimeout:   10 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,
