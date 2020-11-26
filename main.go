@@ -18,8 +18,8 @@ import (
 	flags "github.com/jessevdk/go-flags"
 )
 
-// Version by Makefile
-var Version string
+// version by Makefile
+var version string
 
 type cmdOpts struct {
 	URL              string `long:"url" description:"URL to ping" required:"true"`
@@ -158,18 +158,18 @@ func _main() int {
 	opts := cmdOpts{}
 	psr := flags.NewParser(&opts, flags.Default)
 	_, err := psr.Parse()
-	if err != nil {
-		return 1
-	}
 	if opts.Version {
 		fmt.Printf(`%s %s
 Compiler: %s %s
 `,
 			os.Args[0],
-			Version,
+			version,
 			runtime.Compiler,
 			runtime.Version())
 		return 0
+	}
+	if err != nil {
+		return 1
 	}
 
 	err = getStats(opts)
