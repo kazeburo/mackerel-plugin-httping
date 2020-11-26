@@ -1,5 +1,5 @@
 VERSION=0.0.3
-LDFLAGS=-ldflags "-w -s -X main.Version=${VERSION}"
+LDFLAGS=-ldflags "-w -s -X main.version=${VERSION}"
 GO111MODULE=on
 
 all: mackerel-plugin-httping
@@ -23,8 +23,10 @@ deps-update:
 clean:
 	rm -rf mackerel-plugin-httping
 
+check:
+	go test ./...
+
 tag:
 	git tag v${VERSION}
 	git push origin v${VERSION}
 	git push origin master
-	goreleaser --rm-dist
