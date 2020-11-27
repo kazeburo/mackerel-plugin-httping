@@ -19,7 +19,7 @@ Usage:
 Application Options:
       --url=               URL to ping
       --timeout=           timeout millisec per ping (default: 5000)
-      --interval=          sleep millisec after every ping (default: 10)
+      --interval=          sleep millisec after every ping (default: 200)
       --count=             Count Sending ping (default: 10)
       --key-prefix=        Metric key prefix
       --disable-keepalive  disable keepalive
@@ -27,6 +27,7 @@ Application Options:
 
 Help Options:
   -h, --help               Show this help message
+
 ```
 
 ## output sample
@@ -40,3 +41,8 @@ httping.example_rtt_ms.min      108.004440      1581488858
 httping.example_rtt_ms.average  109.899642      1581488858
 httping.example_rtt_ms.90_percentile    110.906144      1581488858
 ```
+
+
+## Install
+
+Please download release page or `mkr plugin install kazeburo/mackerel-plugin-httping`.
